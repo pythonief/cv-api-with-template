@@ -1,0 +1,5 @@
+{
+    "comment": "Here will be the global configurations for the app",
+    "SQLALCHEMY_DATABASE_URI": "sqlite:///test.sqlite",
+    "SQLALCHEMY_TRACK_MODIFICATIONS": true
+}
