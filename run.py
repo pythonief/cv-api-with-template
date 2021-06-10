@@ -17,15 +17,10 @@ from myapp.extensions import db
 
 app = create_app('config.json', db)
 
-# Import commands
-from myapp.blueprints.users.app import createsuperuser
 
 try:
     with app.app_context():
         db.create_all()
-
-        # Reggister commands
-        app.cli.add_command(createsuperuser)
 except Exception as e:
     print('Error in database initialization: ', e.args[0])
 

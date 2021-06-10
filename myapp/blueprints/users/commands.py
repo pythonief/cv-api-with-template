@@ -4,8 +4,8 @@ Commans to use in like a cli command
 """
 
 import click
-from werkzeug.security import generate_password_hash
 from myapp.extensions import db
+from werkzeug.security import generate_password_hash
 from .app import users
 from .models import User
 

@@ -1,7 +1,5 @@
 # Import flask utilities
-from .commands import *
 from flask import Blueprint
-
 # Import views
 from .views import UserAPI
 
