@@ -17,7 +17,6 @@ from myapp.extensions import db
 
 app = create_app('config.json', db)
 
-
 try:
     with app.app_context():
         db.create_all()
@@ -26,8 +25,6 @@ except Exception as e:
 
 # Just for testing registration routes
 log_routes(app)
-
-
 
 # Inside the secret.json file, the key-value 'MODE' can be set on 'dev' or 'prod'.
 # default: MODE: 'prod' if MODE is not set with a DEBUG = False behaviour

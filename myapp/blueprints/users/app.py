@@ -7,24 +7,34 @@ from .views import UserAPI
 users = Blueprint('users', __name__, url_prefix='/users')
 
 # Setiing views
-users_view = UserAPI.as_view('user_api')
+
 
 # Setting url rules
 users.add_url_rule(
     rule='/',
     methods=['GET'],
-    view_func=users_view,
-    defaults={'user_id': None}
+    view_func=UserAPI.as_view('user_ALL'),
+    defaults={'user_id': None},
 )
 users.add_url_rule(
     rule='/',
     methods=['POST'],
-    view_func=users_view
+    view_func=UserAPI.as_view('user_POST')
 )
 users.add_url_rule(
     rule='/<int:user_id>',
-    methods=['GET', 'PUT', 'DELETE'],
-    view_func=users_view
+    methods=['GET'],
+    view_func=UserAPI.as_view('user_GET')
+)
+users.add_url_rule(
+    rule='/<int:user_id>',
+    methods=['PUT'],
+    view_func=UserAPI.as_view('user_PUT')
+)
+users.add_url_rule(
+    rule='/<int:user_id>',
+    methods=['DELETE'],
+    view_func=UserAPI.as_view('user_DELETE')
 )
 
 from .commands import *

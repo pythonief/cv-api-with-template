@@ -35,4 +35,4 @@ def log_routes(app: Flask):
     with app.app_context():
         log.info('MAP ROUTER')
         for rule in app.url_map.iter_rules():
-            log.debug(f'Endpoint: {rule}')
+            log.debug(f'Endpoint: {rule} methods={rule.methods}')
