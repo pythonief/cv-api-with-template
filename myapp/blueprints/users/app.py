@@ -2,39 +2,39 @@
 from flask import Blueprint
 # Import views
 from .views import UserAPI
+# Import commands
+from .commands import createsuperuser
+
+
+GET = 'GET'
+POST = 'POST'
+PUT = 'PUT'
+DELETE = 'DELETE'
+
 
 #: Declare the blueprint variable with name and prefix url
 users = Blueprint('users', __name__, url_prefix='/users')
-
-# Setiing views
+users.cli.add_command(createsuperuser, 'createsuperuser')
 
 
 # Setting url rules
 users.add_url_rule(
     rule='/',
-    methods=['GET'],
-    view_func=UserAPI.as_view('user_ALL'),
-    defaults={'user_id': None},
-)
-users.add_url_rule(
-    rule='/',
-    methods=['POST'],
-    view_func=UserAPI.as_view('user_POST')
+    methods=[GET, POST],
+    view_func=UserAPI.as_view('users')
 )
 users.add_url_rule(
     rule='/<int:user_id>',
-    methods=['GET'],
+    methods=[GET],
     view_func=UserAPI.as_view('user_GET')
 )
 users.add_url_rule(
     rule='/<int:user_id>',
-    methods=['PUT'],
+    methods=[PUT],
     view_func=UserAPI.as_view('user_PUT')
 )
 users.add_url_rule(
     rule='/<int:user_id>',
-    methods=['DELETE'],
+    methods=[DELETE],
     view_func=UserAPI.as_view('user_DELETE')
 )
-
-from .commands import *

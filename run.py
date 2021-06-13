@@ -11,7 +11,7 @@ from myapp.app import create_app
 from myapp.utils import log_routes
 
 # Import extensions
-from myapp.extensions import db
+from myapp.extensions.db import db
 
 # Import config file
 

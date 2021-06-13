@@ -5,12 +5,13 @@ from flask import Flask
 from .utils import register_blueprints, load_config
 
 # Import db defaults
-from myapp.extensions import db as db_default
+from myapp.extensions.db import db as db_default
 
 # Import blueprints
 # --> from myapp.blueprints.<module_name> import <bluprint_variable> as <name_blueprint>
 from myapp.blueprints.home.app import home as home_blueprint
 from myapp.blueprints.users.app import users as users_blueprint
+
 
 def create_app(json_file='config.json', db=db_default):
     app = Flask(__name__)

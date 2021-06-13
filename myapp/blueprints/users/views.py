@@ -23,7 +23,7 @@ MethodView Class
 
 class UserAPI(MethodView):
 
-    def get(self, user_id):
+    def get(self, user_id=None):
         if user_id is None:
             list_users = User.get_all()
             if list_users:
@@ -43,8 +43,13 @@ class UserAPI(MethodView):
             user, errors = User.create_instance(fullname, email, password)
             if user:
                 user.save()
-                response = Response(user)
-                response.headers['Location'] = user.url
+
+                user_serialized = jsonify(user).data
+
+                response = Response(user_serialized)
+                response.content_type = 'application/json'
+                response.headers['Location'] = user.get_url()
+                response.status = 200
                 return response
             else:
                 return jsonify(errors), 400
@@ -66,7 +71,7 @@ class UserAPI(MethodView):
         data = request.get_json()
         if not user and data:
             response = requests.post(url_for(
-                'users.user_POST'), json=data, headers=request.headers, cookies=request.cookies)
+                'users.users'), json=data, headers=request.headers, cookies=request.cookies)
             return (response.content, response.status_code, response.headers.items())
         if not data:
             return jsonify({
@@ -77,13 +82,14 @@ class UserAPI(MethodView):
         email = data.get('email', None)
         password = data.get('password', None)
         if fullname:
-            setattr(new_data, 'fullname', fullname)
+            new_data['fullname'] = fullname
         if email:
-            setattr(new_data, 'email', email)
+            new_data['email'] = email
         if password:
-            setattr(new_data, 'password', password)
-
+            new_data['password'] = password
+        print(new_data)
         updated_user = user.update_instance(new_data)
         if updated_user:
-            return '', 204
+            updated_user.save()
+            return '', 200
         return '', 400
