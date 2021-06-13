@@ -2,10 +2,12 @@
 from flask import Blueprint
 # Import views
 from .views import UserAPI
+# Import commands
+from .commands import createsuperuser
 
 #: Declare the blueprint variable with name and prefix url
 users = Blueprint('users', __name__, url_prefix='/users')
-
+users.cli.add_command(createsuperuser, 'createsuperuser')
 # Setiing views
 
 
@@ -37,4 +39,4 @@ users.add_url_rule(
     view_func=UserAPI.as_view('user_DELETE')
 )
 
-from .commands import *
+

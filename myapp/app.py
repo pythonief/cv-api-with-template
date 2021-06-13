@@ -12,6 +12,7 @@ from myapp.extensions.db import db as db_default
 from myapp.blueprints.home.app import home as home_blueprint
 from myapp.blueprints.users.app import users as users_blueprint
 
+
 def create_app(json_file='config.json', db=db_default):
     app = Flask(__name__)
     try:
