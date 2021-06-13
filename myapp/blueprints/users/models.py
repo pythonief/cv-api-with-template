@@ -22,6 +22,7 @@ MODEL CLASSES DB
 MAX_STRING_LENGHT = 80
 PASSWORD_MAX_LENGHT = 14
 
+
 @dataclass
 class User(SQLBaseModel):
     # Meta attributes for dataclass decorator
@@ -29,7 +30,6 @@ class User(SQLBaseModel):
     fullname: str
     email: str
     is_admin: bool
-    url: str = None
 
     __tablename__ = 'users'
 
@@ -39,27 +39,25 @@ class User(SQLBaseModel):
     password = db.Column(db.String(PASSWORD_MAX_LENGHT), nullable=False)
     is_admin = db.Column(db.Boolean)
 
-    def __init__(self, fullname: str, email: str, password: str, is_admin: bool = False, url: str = None):
+    def __init__(self, fullname: str, email: str, password: str, is_admin: bool = False):
         self.fullname = fullname
         self.email = email
         self.password = password
         self.is_admin = is_admin
-        self.url = url
 
     def save(self):
         super(User, self).save()
-        self.url = url_for('users.user_GET', user_id=self.id)
 
     @classmethod
     def get_by_email(cls, email: str):
         user = cls.query.filter_by(email=email).first() or None
         return user
 
-    def update_instance(self, **kwargs):
-        self.fullname = kwargs.get('fullname', self.fullname)
-        self.email = kwargs.get('email', self.email)
+    def update_instance(self, new_data):
+        self.fullname = new_data.get('fullname', self.fullname)
+        self.email = new_data.get('email', self.email)
 
-        new_password = kwargs.get('password', None)
+        new_password = new_data.get('password', None)
         if new_password:
             if not check_password_hash(self.password, new_password) and len(new_password >= 8):
                 self.password = generate_password_hash(
@@ -73,7 +71,8 @@ class User(SQLBaseModel):
             fullname: str = None,
             email: str = None,
             password: str = None,
-            from_oauth: bool = False #TODO: Create a funtionality to manage users with google oauth
+            # TODO: Create a funtionality to manage users with google oauth
+            from_oauth: bool = False
     ):
         errors = []
 
@@ -99,3 +98,7 @@ class User(SQLBaseModel):
 
         new_user = User(fullname, email, password)
         return new_user, errors
+
+    def get_url(self):
+        url = url_for('users.user_GET', user_id=self.id)
+        return url

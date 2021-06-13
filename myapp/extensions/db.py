@@ -24,5 +24,4 @@ class SQLBaseModel(db.Model):
     @classmethod
     def get_entity_by_id(cls, pk):
         entity = cls.query.filter_by(id=pk).first()
-        print(entity)
         return entity
