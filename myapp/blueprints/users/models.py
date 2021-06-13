@@ -12,8 +12,8 @@ from flask import url_for
 from werkzeug.security import check_password_hash, gen_salt, generate_password_hash
 
 # Import extensions
-from myapp.extensions import db
-from myapp.extensions import SQLBaseModel
+from myapp.extensions.db import db
+from myapp.extensions.db import SQLBaseModel
 
 """
 MODEL CLASSES DB

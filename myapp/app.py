@@ -5,7 +5,7 @@ from flask import Flask
 from .utils import register_blueprints, load_config
 
 # Import db defaults
-from myapp.extensions import db as db_default
+from myapp.extensions.db import db as db_default
 
 # Import blueprints
 # --> from myapp.blueprints.<module_name> import <bluprint_variable> as <name_blueprint>

@@ -4,7 +4,7 @@ Commans to use in like a cli command
 """
 
 import click
-from myapp.extensions import db
+from myapp.extensions.db import db
 from werkzeug.security import generate_password_hash
 from .app import users
 from .models import User
