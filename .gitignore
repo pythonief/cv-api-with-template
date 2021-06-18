@@ -4,6 +4,9 @@ venv/
 environ/
 enviroment/
 
+db-data/
+
 .vscode/
 *.sqlite
 *secret*
+.env

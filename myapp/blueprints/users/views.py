@@ -3,18 +3,16 @@ View Classes for the API. We recommend to use MethodView inherited classes
 """
 
 # Import flask utilities
-from flask.helpers import url_for
-from flask.views import MethodView
-from flask.json import jsonify
-from flask import request
+from .models import User
 from flask import Response
+from flask import request
+from flask.json import jsonify
+from flask.views import MethodView
+from.validators import *
 
 # Import extensions
-import requests
-from werkzeug.security import generate_password_hash
 
 # Import models
-from .models import User
 
 """
 MethodView Class
@@ -49,7 +47,7 @@ class UserAPI(MethodView):
                 response = Response(user_serialized)
                 response.content_type = 'application/json'
                 response.headers['Location'] = user.get_url()
-                response.status = 200
+                response.status = 201
                 return response
             else:
                 return jsonify(errors), 400
@@ -69,14 +67,15 @@ class UserAPI(MethodView):
     def put(self, user_id: int):
         user: User = User.get_entity_by_id(user_id)
         data = request.get_json()
+        # Redirect to post method and create a new user registry
         if not user and data:
-            response = requests.post(url_for(
-                'users.users'), json=data, headers=request.headers, cookies=request.cookies)
-            return (response.content, response.status_code, response.headers.items())
+            return self.post()
+        # Get back error response for empty body
         if not data:
             return jsonify({
                 'message': 'body is empty'
             }), 400
+        # Obtain info from request data
         new_data = {}
         fullname = data.get('fullname', None)
         email = data.get('email', None)
@@ -87,9 +86,11 @@ class UserAPI(MethodView):
             new_data['email'] = email
         if password:
             new_data['password'] = password
-        print(new_data)
-        updated_user = user.update_instance(new_data)
-        if updated_user:
-            updated_user.save()
+        # Validate and modify existing data -> return None or the self user modified
+        response = user.update_instance(new_data)
+        if isinstance(response, User):
+            user.save()
+            # Updated
             return '', 200
-        return '', 400
+        # Not updated
+        return jsonify(response), 400

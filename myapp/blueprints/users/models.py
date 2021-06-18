@@ -7,6 +7,7 @@ Hints:
 """
 
 # Import utilities
+from .validators import *
 from dataclasses import dataclass
 from flask import url_for
 from werkzeug.security import check_password_hash, gen_salt, generate_password_hash
@@ -20,7 +21,6 @@ MODEL CLASSES DB
 """
 
 MAX_STRING_LENGHT = 80
-PASSWORD_MAX_LENGHT = 14
 
 
 @dataclass
@@ -36,7 +36,7 @@ class User(SQLBaseModel):
     fullname = db.Column(db.String(MAX_STRING_LENGHT), nullable=False)
     email = db.Column(db.String(MAX_STRING_LENGHT),
                       unique=True, nullable=False)
-    password = db.Column(db.String(PASSWORD_MAX_LENGHT), nullable=False)
+    password = db.Column(db.String(255), nullable=False)
     is_admin = db.Column(db.Boolean)
 
     def __init__(self, fullname: str, email: str, password: str, is_admin: bool = False):
@@ -54,18 +54,30 @@ class User(SQLBaseModel):
         return user
 
     def update_instance(self, new_data):
-        self.fullname = new_data.get('fullname', self.fullname)
-        self.email = new_data.get('email', self.email)
 
+        errors = []
+
+        self.fullname = new_data.get('fullname', self.fullname)
+        new_email = new_data.get('email', self.email)
         new_password = new_data.get('password', None)
+
+        pass_validated = pass_validator.match(new_password)
+
+        if email_validator.match(new_email):
+            self.email = new_email
+        else:
+            errors.append(email_valid_message)
+
         if new_password:
-            if not check_password_hash(self.password, new_password) and len(new_password >= 8):
+            if not pass_validated:
+                errors.append(password_valid)
+            if not check_password_hash(self.password, new_password) and pass_validated:
                 self.password = generate_password_hash(
                     new_password, method='sha256')
-            if not len(new_password >= 8):
-                return None
             # The password is the same
-        return self
+        if not errors:
+            return self
+        return errors
 
     def create_instance(
             fullname: str = None,
